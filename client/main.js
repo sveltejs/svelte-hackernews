@@ -1,10 +1,10 @@
 import roadtrip from 'roadtrip';
-import { getItem, getUser } from './store.js';
-import getJSON from './utils/getJSON.js';
+import { getItem, getUser, getPage } from './store.js';
 import Item from '../shared/routes/Item.html';
-import Top from '../shared/routes/Top.html';
+import List from '../shared/routes/List.html';
 import User from '../shared/routes/User.html';
 import Nav from '../shared/components/Nav.html';
+import lists from '../shared/lists.js';
 
 const header = document.querySelector( 'header' );
 const main = document.querySelector( 'main' );
@@ -15,100 +15,112 @@ const nav = new Nav({
 
 let view;
 
+roadtrip.add( '/', {
+	enter () {
+		roadtrip.goto( '/top/1' );
+	}
+});
 
+// lists
+lists.forEach( list => {
+	roadtrip.add( `/${list.type}/:page`, {
+		enter ( route ) {
+			nav.set({ route: list.type });
 
-roadtrip
-	.add( '/', {
-		enter ( route ) {
-			roadtrip.goto( '/top/1' );
-		}
-	})
-	.add( '/top/:page', {
-		enter ( route ) {
-			nav.set({ route: 'top' });
+			// we don't actually need to do anything, because the page
+			// is completely static. This may change in a future version
+			// (i.e. if we subscribe to realtime updates)
+			if ( route.isInitial ) return;
 
 			document.title = 'Svelte Hacker News';
 
-			return getJSON( `/top/${route.params.page}.json` ).then( items => {
+			return getPage( list.type, route.params.page ).then( data => {
 				if ( view ) {
 					view.destroy();
 				} else {
 					main.innerHTML = '';
 				}
 
-				view = new Top({
+				main.classList.remove( 'loading' );
+
+				view = new List({
 					target: main,
-					data: {
-						items
-					}
+					data
 				});
+
+				window.scrollTo( route.scrollX, route.scrollY );
 			});
+		},
+		leave () {
+			main.classList.add( 'loading' );
 		}
-	})
-	.add( '/newest', {
-		enter ( route ) {
-			nav.set({ route: 'newest' });
-		}
-	})
-	.add( '/show', {
-		enter ( route ) {
-			nav.set({ route: 'show' });
-		}
-	})
-	.add( '/ast', {
-		enter ( route ) {
-			nav.set({ route: 'ast' });
-		}
-	})
-	.add( '/jobs', {
-		enter ( route ) {
-			nav.set({ route: 'jobs' });
-		}
-	})
-	.add( '/user/:name', {
-		enter ( route ) {
-			return getUser( route.params.name ).then( user => {
-				console.log( `user`, user )
-				document.title = `Profile: ${user.name} | Svelte Hacker News`;
+	});
+});
 
-				nav.set({ route: 'user' });
+// items
+roadtrip.add( '/item/:id', {
+	enter ( route ) {
+		return getItem( route.params.id ).then( item => {
+			document.title = item.title;
 
-				if ( view ) {
-					view.destroy();
-				} else {
-					main.innerHTML = '';
+			nav.set({ route: 'item' });
+
+			if ( view ) {
+				view.destroy();
+			} else {
+				main.innerHTML = '';
+			}
+
+			main.classList.remove( 'loading' );
+
+			view = new Item({
+				target: main,
+				data: {
+					item,
+					loading: true,
+					scrollY: route.scrollY
 				}
-
-				view = new User({
-					target: main,
-					data: {
-						user
-					}
-				});
 			});
-		}
-	})
-	.add( '/item/:id', {
-		enter ( route ) {
-			return getItem( route.params.id ).then( item => {
-				document.title = item.title;
 
-				nav.set({ route: 'item' });
+			window.scrollTo( route.scrollX, route.scrollY );
+		});
+	},
+	leave () {
+		main.classList.add( 'loading' );
+	}
+});
 
-				if ( view ) {
-					view.destroy();
-				} else {
-					main.innerHTML = '';
+// users
+roadtrip.add( '/user/:id', {
+	enter ( route ) {
+		return getUser( route.params.id ).then( user => {
+			nav.set({ route: 'user' });
+
+			if ( route.isInitial ) return; // see note above
+
+			document.title = `Profile: ${user.id} | Svelte Hacker News`;
+
+			if ( view ) {
+				view.destroy();
+			} else {
+				main.innerHTML = '';
+			}
+
+			main.classList.remove( 'loading' );
+
+			view = new User({
+				target: main,
+				data: {
+					user
 				}
-
-				view = new Item({
-					target: main,
-					data: {
-						item,
-						loading: true
-					}
-				});
 			});
-		}
-	})
-	.start();
+
+			window.scrollTo( route.scrollX, route.scrollY );
+		});
+	},
+	leave () {
+		main.classList.add( 'loading' );
+	}
+});
+
+roadtrip.start();

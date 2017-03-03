@@ -2,10 +2,12 @@
   "devDependencies": {
     "compression": "^1.6.2",
     "eslint": "^3.16.1",
+    "eslint-plugin-import": "^2.2.0",
     "express": "^4.15.0",
     "firebase": "^3.7.0",
     "mocha": "^3.2.0",
     "reify": "^0.4.9",
+    "roadtrip": "^0.3.1",
     "rollup": "^0.41.4",
     "rollup-plugin-buble": "^0.15.0",
     "rollup-plugin-commonjs": "^7.0.0",
@@ -24,13 +26,14 @@
     "eslint": "^3.16.1",
     "firebase": "^3.7.0",
     "lru-cache": "^4.0.2",
+    "roadtrip": "^0.3.2",
     "rollup": "^0.41.4",
     "rollup-plugin-svelte": "^1.6.0"
   },
   "scripts": {
     "build": "webpack --config client/webpack.config.js",
     "dev:webpack": "webpack --config client/webpack.config.js --watch",
-    "dev": "rollup -c client/rollup.config.js -w",
+    "dev": "rollup -c client/rollup.config.js -w -e DEVELOPMENT=true",
     "start": "node server"
   },
   "repository": {

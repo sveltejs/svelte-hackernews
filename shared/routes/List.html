@@ -1,0 +1,23 @@
+{{#each items as item, i}}
+	<ItemSummary item='{{item}}' index='{{start + i}}'/>
+{{/each}}
+
+{{#if next}}
+	<a class='more' href='{{next}}'>More...</a>
+{{/if}}
+
+<script>
+	import ItemSummary from '../components/ItemSummary.html';
+
+	export default {
+		data () {
+			return {
+				items: []
+			}
+		},
+
+		components: {
+			ItemSummary
+		}
+	};
+</script>

@@ -1,11 +1,11 @@
 <article>
 	<h2>
-		<a href='{{item.url}}'>{{item.title}} {{#if item.url}}<small>({{hostname}})</small>{{/if}}</a>
+		<a href='{{item.url}}'>{{item.title}} {{#if item.url}}<small>({{hostname( item.url )}})</small>{{/if}}</a>
 	</h2>
 
-	<p><a href='/user/{{item.by}}'>{{item.by}}</a> {{ago}} ago | <a href='/item/{{item.id}}'>{{item.descendants}} comments</a></p>
+	<p>{{item.score}} points by <a href='/user/{{item.by}}'>{{item.by}}</a> {{timebetween(item.time, now)}} ago | <a href='/item/{{item.id}}'>{{item.descendants}} comments</a></p>
 
-	<span class='score'>{{item.score}}</span>
+	<span class='index'>{{index}}</span>
 </article>
 
 <style>
@@ -19,38 +19,34 @@
 		font-size: 1em;
 		font-weight: 400;
 		margin: 0 0 0.5em 0;
+		color: #333;
 	}
 
-	a {
-		color: #333;
-		text-decoration: none;
+	p {
+		font-size: 0.8em;
+		color: #888;
 	}
 
 	small {
-		color: #666;
+		color: #888;
 	}
 
-	.score {
+	.index {
 		position: absolute;
 		font-family: Rajdhani;
-		font-weight: 900;
-		left: 0.5em;
-		top: 0.5em;
+		font-size: 1.6em;
+		font-weight: 200;
+		color: #888;
+		left: 0.2em;
+		top: 0.1em;
+		text-align: right;
+		width: 0.75em;
 	}
 </style>
 
 <script>
-	// import db from '../db.js';
-
-	const MINUTE = 60;
-	const HOUR = 60 * MINUTE;
-	const DAY = 24 * HOUR;
-
-	function plural ( num, unit ) {
-		num = ~~num;
-		if ( num !== 1 ) unit += 's';
-		return `${num} ${unit}`;
-	}
+	import hostname from '../helpers/hostname.js';
+	import timebetween from '../helpers/timebetween.js';
 
 	export default {
 		data () {
@@ -62,37 +58,9 @@
 			};
 		},
 
-		computed: {
-			hostname ( item ) {
-				const match = /^https?:\/\/(?:w{3}\.)?([^\/]+)/.exec( item.url );
-				return match ? match[1] : '...';
-			},
-
-			ago ( item, now ) {
-				const elapsed = now - item.time;
-
-				if ( elapsed < HOUR ) {
-					return plural( elapsed / MINUTE, 'minute' );
-				} else if ( elapsed < DAY ) {
-					return plural( elapsed / HOUR, 'hour' );
-				} else {
-					return plural( elapsed / DAY, 'day' )
-				}
-			}
-		},
-
-		// oncreate () {
-		// 	const id = this.get( 'id' );
-		// 	this.ref = db.child( `item/${id}` );
-
-		// 	this.listener = this.ref.on( 'value', snapshot => {
-		// 		const item = snapshot.val();
-		// 		this.set( item );
-		// 	});
-		// },
-
-		// ondestroy () {
-		// 	this.ref.off( 'value', this.listener );
-		// }
+		helpers: {
+			hostname,
+			timebetween
+		}
 	};
 </script>

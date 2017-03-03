@@ -1,25 +1,62 @@
-<ItemSummary item='{{item}}'/>
+<article>
+	<a class='main-link' href='{{item.url}}'>
+		<h1>{{item.title}}</h1>
+		{{#if item.url}}<small>{{hostname( item.url )}}</small>{{/if}}
+	</a>
 
-{{#if loading}}
-	<p>loading...</p>
+	<p class='meta'>{{item.score}} points by <a href='/user/{{item.by}}'>{{item.by}}</a> {{timebetween( item.time, now )}} ago</p>
+</article>
+
+{{#if item.descendants}}
+	<h3>{{item.descendants}} comments {{#if loading}}(...loading){{/if}}</h3> <!-- TODO replace with spinner -->
 {{else}}
-	{{#each comments as comment}}
-		<Comment comment='{{comment}}'/>
-	{{/each}}
+	<h3>No comments yet</h3>
 {{/if}}
+
+{{#each comments as comment}}
+	<Comment comment='{{comment}}'/>
+{{/each}}
+
+<style>
+	article {
+		border-bottom: 4px solid #f4f4f4;
+		margin: 0 0 2em 0;
+	}
+
+	.main-link {
+		display: block;
+	}
+
+	small {
+		display: block;
+	}
+
+	.meta {
+		font-size: 0.8em;
+		color: #666;
+	}
+</style>
 
 <script>
 	import ItemSummary from '../components/ItemSummary.html';
 	import Comment from '../components/Comment.html';
 	import { getComments } from '../../client/store.js';
+	import hostname from '../helpers/hostname.js';
+	import timebetween from '../helpers/timebetween.js';
 
 	export default {
 		data () {
 			return {
 				item: null,
 				comments: [],
-				loading: true
+				loading: true,
+				now: Date.now() / 1e3
 			};
+		},
+
+		helpers: {
+			hostname,
+			timebetween
 		},
 
 		components: {
@@ -35,6 +72,8 @@
 					loading: false,
 					comments
 				});
+
+				window.scrollTo( 0, this.get( 'scrollY' ) );
 			});
 		}
 	};

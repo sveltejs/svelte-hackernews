@@ -1,9 +1,19 @@
 <h1>User : {{user.id}}</h1>
 
+<p>
+	<a href='https://news.ycombinator.com/submitted?id=dang'>submissions</a> /
+	<a href='https://news.ycombinator.com/threads?id=dang'>comments</a> /
+	<a href='https://news.ycombinator.com/favorites?id=dang'>favourites</a>
+</p>
+
 <ul>
 	<li>created <strong>{{ago}}</strong></li>
 	<li>karma <strong>{{user.karma}}</strong></li>
 </ul>
+
+<div>
+	{{{user.about}}}
+</div>
 
 <style>
 

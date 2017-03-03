@@ -12,7 +12,7 @@ export default {
 		nodeResolve({ jsnext: true }),
 		commonjs(),
 		svelte({
-			css: false
+			css: process.env.DEVELOPMENT
 		}),
 		buble(),
 		// uglify()

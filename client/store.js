@@ -4,14 +4,34 @@ const itemCache = {};
 
 export function getItem ( id ) {
 	if ( !itemCache[ id ] ) {
-		const promise = getJSON( `/item/${id}.json` ).catch( err => {
+		const promise = getJSON( `https://hacker-news.firebaseio.com/v0/item/${id}.json` ).catch( err => {
 			itemCache[ id ] = null;
 		});
 
 		itemCache[ id ] = promise;
+
+		// remove from cache after 60 seconds
+		setTimeout( () => {
+			if ( itemCache[ id ] === promise ) itemCache[ id ] = null;
+		}, 60 * 1000 );
 	}
 
 	return itemCache[ id ];
+}
+
+export function getPage ( type, page ) {
+	return getJSON( `/${type}/${page}.json` ).then( data => {
+		data.items.forEach( item => {
+			const promise = itemCache[ item.id ] = Promise.resolve( item );
+
+			// remove from cache after 60 seconds
+			setTimeout( () => {
+				if ( itemCache[ item.id ] === promise ) itemCache[ item.id ] = null;
+			}, 60 * 1000 );
+		});
+
+		return data;
+	});
 }
 
 const commentsCache = {};

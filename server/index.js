@@ -5,7 +5,9 @@ const fs = require( 'fs' );
 const LRU = require( 'lru-cache' );
 const express = require( 'express' );
 const compression = require( 'compression' );
+
 const db = require( './db.js' ).default;
+const lists = require( '../shared/lists.js' ).default;
 
 const app = express();
 
@@ -22,23 +24,38 @@ app.get( '/main.css', ( req, res ) => {
 	res.end( css );
 });
 
-const cached = {
-	topstories: []
-};
-
-db.child( 'topstories' ).on( 'value', snapshot => {
-	cached.topstories = snapshot.val();
+const cached = {};
+lists.forEach( list => {
+	cached[ list.id ] = [];
 });
+
+lists.forEach( list => {
+	db.child( `${list.type}stories` ).on( 'value', snapshot => {
+		cached[ list.type ] = snapshot.val();
+	});
+});
+
 
 const PAGE_SIZE = 20;
 
-function getPage ( page ) {
+function getPage ( type, page ) {
+	page = +page;
 	const end = page * PAGE_SIZE;
 	const start = end - PAGE_SIZE;
 
+	const data = cached[ type ];
+
 	return Promise.all(
-		cached.topstories.slice( start, end ).map( getItem )
-	);
+		data.slice( start, end ).map( getItem )
+	).then( items => {
+		return {
+			page,
+			items,
+			start: start + 1,
+			end,
+			next: end < data.length ? `/${type}/${page + 1}` : null
+		};
+	});
 }
 
 const items = LRU( 100 );
@@ -104,22 +121,24 @@ app.get( '/', ( req, res ) => {
 	res.redirect( '/top/1' );
 });
 
-app.get( '/top/:page.json', ( req, res ) => {
-	getPage( req.params.page ).then( data => serveJSON( res, data ) );
-});
+lists.forEach( list => {
+	app.get( `/${list.type}/:page.json`, ( req, res ) => {
+		getPage( list.type, req.params.page ).then( data => serveJSON( res, data ) );
+	});
 
-app.get( '/top/:page', ( req, res ) => {
-	const Nav = require( '../shared/components/Nav.html' );
-	const Top = require( '../shared/routes/Top.html' );
+	app.get( `/${list.type}/:page`, ( req, res ) => {
+		const Nav = require( '../shared/components/Nav.html' );
+		const List = require( '../shared/routes/List.html' );
 
-	getPage( req.params.page ).then( items => {
-		serve( res, {
-			title: 'Svelte Hacker News',
-			nav: Nav.render({ route: 'top' }),
-			route: Top.render({ items })
+		getPage( list.type, req.params.page ).then( data => {
+			serve( res, {
+				title: 'Svelte Hacker News',
+				nav: Nav.render({ route: list.type }),
+				route: List.render( data )
+			});
+		}).catch( err => {
+			console.log( err.stack );
 		});
-	}).catch( err => {
-		console.log( err.stack );
 	});
 });
 
@@ -163,15 +182,15 @@ app.get( '/user/:id', ( req, res ) => {
 
 function getComment ( id ) {
 	return getItem( id ).then( item => {
-		return Promise.all( item.kids ? item.kids.map( getComment ) : [] ).then( comments => {
+		return Promise.all( item && item.kids ? item.kids.map( getComment ) : [] ).then( comments => {
 			return Object.assign({ children: comments }, item );
 		});
-	})
+	});
 }
 
 app.get( '/comments/:id.json', ( req, res ) => {
 	getItem( req.params.id ).then( item => {
-		return Promise.all( item.kids ? item.kids.map( getComment ) : [] );
+		return Promise.all( item && item.kids ? item.kids.map( getComment ) : [] );
 	}).then( comments => {
 		serveJSON( res, comments );
 	});

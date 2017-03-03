@@ -5,11 +5,11 @@
 		</div>
 
 		<ul>
-			<li><a href='/'>top</a></li>
-			<li><a href='/newest'>newest</a></li>
-			<li><a href='/show'>show</a></li>
-			<li><a href='/ask'>ask</a></li>
-			<li><a href='/jobs'>jobs</a></li>
+			<li><a class='{{route === "top"  ? "selected" : ""}}' href='/top/1'>top</a></li>
+			<li><a class='{{route === "new"  ? "selected" : ""}}' href='/new/1'>newest</a></li>
+			<li><a class='{{route === "show" ? "selected" : ""}}' href='/show/1'>show</a></li>
+			<li><a class='{{route === "ask"  ? "selected" : ""}}' href='/ask/1'>ask</a></li>
+			<li><a class='{{route === "job"  ? "selected" : ""}}' href='/job/1'>jobs</a></li>
 		</ul>
 	</nav>
 </header>
@@ -24,22 +24,24 @@
 
 	.icon {
 		display: inline-block;
-		width: 1em;
-		height: 1em;
+		width: 0.8em;
+		height: 0.8em;
 		border: 1px solid white;
 		float: left;
 		text-align: center;
 		line-height: 1;
-		font-size: 1.6em;
+		font-size: 2em;
 		position: relative;
 		top: -0.1em;
 		box-sizing: border-box;
 		margin: 0 1em 0 0;
+		opacity: 0.6;
 	}
 
 	.icon span {
 		position: relative;
-		top: -0.05em;
+		top: -0.16em;
+		font-weight: 400;
 	}
 
 	ul {
@@ -50,6 +52,22 @@
 	li {
 		display: inline-block;
 		padding: 0 0.5em;
+	}
+
+	.selected {
+		position: relative;
+		font-weight: 900;
+		display: inline-block;
+	}
+
+	.selected::after {
+		position: absolute;
+		content: '';
+		width: 100%;
+		height: 2px;
+		background-color: white;
+		display: block;
+		bottom: -1em;
 	}
 
 	a {
