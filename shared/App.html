@@ -1,0 +1,22 @@
+<!-- this component isn't rendered anywhere, but we use it
+     collect all the CSS together into one file -->
+<Nav/>
+<Top/>
+<Item/>
+<User/>
+
+<script>
+	import Nav from './components/Nav.html';
+	import Item from './routes/Item.html';
+	import Top from './routes/Top.html';
+	import User from './routes/User.html';
+
+	export default {
+		components: {
+			Nav,
+			Item,
+			Top,
+			User
+		}
+	};
+</script>

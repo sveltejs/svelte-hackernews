@@ -1,0 +1,98 @@
+<article>
+	<h2>
+		<a href='{{item.url}}'>{{item.title}} {{#if item.url}}<small>({{hostname}})</small>{{/if}}</a>
+	</h2>
+
+	<p><a href='/user/{{item.by}}'>{{item.by}}</a> {{ago}} ago | <a href='/item/{{item.id}}'>{{item.descendants}} comments</a></p>
+
+	<span class='score'>{{item.score}}</span>
+</article>
+
+<style>
+	article {
+		position: relative;
+		padding: 0.5em 0.5em 0.5em 2.5em;
+		font-family: Roboto;
+	}
+
+	h2 {
+		font-size: 1em;
+		font-weight: 400;
+		margin: 0 0 0.5em 0;
+	}
+
+	a {
+		color: #333;
+		text-decoration: none;
+	}
+
+	small {
+		color: #666;
+	}
+
+	.score {
+		position: absolute;
+		font-family: Rajdhani;
+		font-weight: 900;
+		left: 0.5em;
+		top: 0.5em;
+	}
+</style>
+
+<script>
+	// import db from '../db.js';
+
+	const MINUTE = 60;
+	const HOUR = 60 * MINUTE;
+	const DAY = 24 * HOUR;
+
+	function plural ( num, unit ) {
+		num = ~~num;
+		if ( num !== 1 ) unit += 's';
+		return `${num} ${unit}`;
+	}
+
+	export default {
+		data () {
+			return {
+				title: '',
+				score: '',
+				time: Date.now() / 1e3,
+				now: Date.now() / 1e3
+			};
+		},
+
+		computed: {
+			hostname ( item ) {
+				const match = /^https?:\/\/(?:w{3}\.)?([^\/]+)/.exec( item.url );
+				return match ? match[1] : '...';
+			},
+
+			ago ( item, now ) {
+				const elapsed = now - item.time;
+
+				if ( elapsed < HOUR ) {
+					return plural( elapsed / MINUTE, 'minute' );
+				} else if ( elapsed < DAY ) {
+					return plural( elapsed / HOUR, 'hour' );
+				} else {
+					return plural( elapsed / DAY, 'day' )
+				}
+			}
+		},
+
+		// oncreate () {
+		// 	const id = this.get( 'id' );
+		// 	this.ref = db.child( `item/${id}` );
+
+		// 	this.listener = this.ref.on( 'value', snapshot => {
+		// 		const item = snapshot.val();
+		// 		this.set( item );
+		// 	});
+		// },
+
+		// ondestroy () {
+		// 	this.ref.off( 'value', this.listener );
+		// }
+	};
+</script>

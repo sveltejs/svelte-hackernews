@@ -1,0 +1,33 @@
+<h1>User : {{user.id}}</h1>
+
+<ul>
+	<li>created <strong>{{ago}}</strong></li>
+	<li>karma <strong>{{user.karma}}</strong></li>
+</ul>
+
+<style>
+
+</style>
+
+<script>
+	export default {
+		data () {
+			const d = new Date();
+
+			return {
+				today: new Date( d.getFullYear(), d.getMonth(), d.getDate() )
+			};
+		},
+
+		computed: {
+			ago ( user, today ) {
+				const created = new Date( user.created * 1e3 );
+				const elapsedDays = ( today - created ) / ( 86400 * 1e3 );
+
+				if ( elapsedDays < 0 ) return 'today';
+				if ( elapsedDays < 1 ) return 'yesterday';
+				return Math.ceil( elapsedDays ) + ' days ago';
+			}
+		}
+	};
+</script>

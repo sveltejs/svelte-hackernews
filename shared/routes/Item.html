@@ -1,0 +1,41 @@
+<ItemSummary item='{{item}}'/>
+
+{{#if loading}}
+	<p>loading...</p>
+{{else}}
+	{{#each comments as comment}}
+		<Comment comment='{{comment}}'/>
+	{{/each}}
+{{/if}}
+
+<script>
+	import ItemSummary from '../components/ItemSummary.html';
+	import Comment from '../components/Comment.html';
+	import { getComments } from '../../client/store.js';
+
+	export default {
+		data () {
+			return {
+				item: null,
+				comments: [],
+				loading: true
+			};
+		},
+
+		components: {
+			ItemSummary,
+			Comment
+		},
+
+		oncreate () {
+			const item = this.get( 'item' );
+
+			getComments( item.id ).then( comments => {
+				this.set({
+					loading: false,
+					comments
+				});
+			});
+		}
+	};
+</script>
