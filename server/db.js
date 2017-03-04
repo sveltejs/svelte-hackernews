@@ -1,7 +1,7 @@
-import Firebase from 'firebase';
+const Firebase = require( 'firebase' );
 
 Firebase.initializeApp({
 	databaseURL: 'https://hacker-news.firebaseio.com'
 });
 
-export default Firebase.database().ref( 'v0' );
+module.exports = Firebase.database().ref( 'v0' );

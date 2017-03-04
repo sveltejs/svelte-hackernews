@@ -1,4 +1,4 @@
-export default [
+module.exports = [
 	{ type: 'top' },
 	{ type: 'new' },
 	// { type: 'best' },

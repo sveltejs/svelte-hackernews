@@ -3,7 +3,10 @@
 		<a href='{{item.url}}'>{{item.title}} {{#if item.url}}<small>({{hostname( item.url )}})</small>{{/if}}</a>
 	</h2>
 
-	<p>{{item.score}} points by <a href='/user/{{item.by}}'>{{item.by}}</a> {{timebetween(item.time, now)}} ago | <a href='/item/{{item.id}}'>{{item.descendants}} comments</a></p>
+	<p>
+		{{item.score}} points by <a href='/user/{{item.by}}'>{{item.by}}</a> {{timebetween(item.time, now)}} ago
+		{{#if item.descendants != null}} | <a href='/item/{{item.id}}'>{{item.descendants}} comments</a>{{/if}}
+	</p>
 
 	<span class='index'>{{index}}</span>
 </article>

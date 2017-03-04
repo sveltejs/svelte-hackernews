@@ -1,29 +1,15 @@
-require( 'reify' );
-require( 'svelte/ssr/register' );
-
 const fs = require( 'fs' );
 const LRU = require( 'lru-cache' );
 const express = require( 'express' );
 const compression = require( 'compression' );
 
-const db = require( './db.js' ).default;
-const lists = require( '../shared/lists.js' ).default;
+const db = require( './db.js' );
+const lists = require( '../shared/lists.js' );
 
 const app = express();
 
 app.use( compression({ threshold: 0 }) );
 app.use( express.static( 'public' ) );
-
-let { css } = require( '../shared/App.html' ).renderCss();
-css = fs.readFileSync( 'server/templates/main.css', 'utf-8' ) + css;
-app.get( '/main.css', ( req, res ) => {
-	res.writeHead( 200, {
-		'Content-Length': css.length,
-		'Content-Type': 'text/css'
-	});
-
-	res.end( css );
-});
 
 const cached = {};
 lists.forEach( list => {
@@ -90,7 +76,32 @@ function getUser ( id ) {
 	return users.get( id );
 }
 
-const template = fs.readFileSync( 'server/templates/index.html', 'utf-8' );
+const template = fs.readFileSync( 'server/templates/index.html', 'utf-8' )
+	.replace( '/*__css__*/', fs.readFileSync( 'public/main.css', 'utf-8' ) ); // TODO doesn't make sense for it to be in public...
+
+const templateChunks = [];
+const pattern = /__(\w+)__/g;
+let match;
+let c = 0;
+
+while ( match = pattern.exec( template ) ) {
+	templateChunks.push({
+		type: 'static',
+		content: template.slice( c, match.index )
+	});
+
+	templateChunks.push({
+		type: 'dynamic',
+		content: match[1]
+	});
+
+	c = match.index + match[0].length;
+}
+
+templateChunks.push({
+	type: 'static',
+	content: template.slice( c )
+});
 
 function serveJSON ( res, data ) {
 	const json = JSON.stringify( data );
@@ -103,18 +114,35 @@ function serveJSON ( res, data ) {
 	res.end( json );
 }
 
-function serve ( res, { title, nav, route }) {
-	const result = template
-		.replace( '__TITLE__', title )
-		.replace( '__NAV__', nav )
-		.replace( '__ROUTE__', route );
-
+function serve ( res, data ) {
 	res.writeHead( 200, {
-		'Content-Length': result.length,
 		'Content-Type': 'text/html'
 	});
 
-	res.end( result );
+	const start = Date.now();
+	console.log( 'serving...', start );
+
+	let promise = Promise.resolve();
+	templateChunks.forEach( chunk => {
+		promise = promise.then( () => {
+			if ( chunk.type === 'static' ) {
+				console.log( Date.now() - start );
+				res.write( chunk.content );
+			}
+
+			else {
+				return Promise.resolve( data[ chunk.content ] ).then( content => {
+					console.log( Date.now() - start );
+					res.write( content );
+				});
+			}
+		});
+	});
+
+	return promise.then( () => {
+		console.log( 'done:', Date.now() - start );
+		res.end();
+	});
 }
 
 app.get( '/', ( req, res ) => {
@@ -127,15 +155,13 @@ lists.forEach( list => {
 	});
 
 	app.get( `/${list.type}/:page`, ( req, res ) => {
-		const Nav = require( '../shared/components/Nav.html' );
-		const List = require( '../shared/routes/List.html' );
+		const Nav = require( './components/Nav.js' );
+		const List = require( './routes/List.js' );
 
-		getPage( list.type, req.params.page ).then( data => {
-			serve( res, {
-				title: 'Svelte Hacker News',
-				nav: Nav.render({ route: list.type }),
-				route: List.render( data )
-			});
+		serve( res, {
+			title: 'Svelte Hacker News',
+			nav: Nav.render({ route: list.type }),
+			route: getPage( list.type, req.params.page ).then( data => List.render( data ) )
 		}).catch( err => {
 			console.log( err.stack );
 		});
@@ -147,15 +173,15 @@ app.get( '/item/:id.json', ( req, res ) => {
 });
 
 app.get( '/item/:id', ( req, res ) => {
-	const Nav = require( '../shared/components/Nav.html' );
-	const Item = require( '../shared/routes/Item.html' );
+	const Nav = require( './components/Nav.js' );
+	const Item = require( './routes/Item.js' );
 
-	getItem( req.params.id ).then( item => {
-		serve( res, {
-			title: `${item.title} | Svelte Hacker News`,
-			nav: Nav.render({ route: 'item' }),
-			route: Item.render({ item })
-		});
+	const promise = getItem( req.params.id );
+
+	serve( res, {
+		title: promise.then( item => `${item.title} | Svelte Hacker News` ),
+		nav: Nav.render({ route: 'item' }),
+		route: promise.then( item => Item.render({ item }) )
 	}).catch( err => {
 		console.log( err.stack );
 	});
@@ -166,23 +192,21 @@ app.get( '/user/:name.json', ( req, res ) => {
 });
 
 app.get( '/user/:id', ( req, res ) => {
-	const Nav = require( '../shared/components/Nav.html' );
-	const User = require( '../shared/routes/User.html' );
+	const Nav = require( './components/Nav.js' );
+	const User = require( './routes/User.js' );
 
-	getUser( req.params.id ).then( user => {
-		serve( res, {
-			title: `Profile: ${user.id} | Svelte Hacker News`,
-			nav: Nav.render({ route: 'user' }),
-			route: User.render({ user })
-		});
+	serve( res, {
+		title: `Profile: ${req.params.id} | Svelte Hacker News`,
+		nav: Nav.render({ route: 'user' }),
+		route: getUser( req.params.id ).then( user => User.render({ user }) )
 	}).catch( err => {
 		console.log( err.stack );
 	});
 });
 
 app.get( '/about', ( req, res ) => {
-	const Nav = require( '../shared/components/Nav.html' );
-	const About = require( '../shared/routes/About.html' );
+	const Nav = require( './components/Nav.js' );
+	const About = require( './routes/About.js' );
 
 	serve( res, {
 		title: `Svelte Hacker News`,
