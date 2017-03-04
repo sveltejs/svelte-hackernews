@@ -1,4 +1,6 @@
-<h1>User : {{user.id}}</h1>
+<h1>{{user.id}}</h1>
+
+<p>...joined <strong>{{ago}}</strong>, and has <strong>{{user.karma}}</strong> karma</p>
 
 <p>
 	<a href='https://news.ycombinator.com/submitted?id=dang'>submissions</a> /
@@ -6,14 +8,16 @@
 	<a href='https://news.ycombinator.com/favorites?id=dang'>favourites</a>
 </p>
 
-<ul>
+<!--<ul>
 	<li>created <strong>{{ago}}</strong></li>
 	<li>karma <strong>{{user.karma}}</strong></li>
-</ul>
+</ul>-->
 
-<div>
-	{{{user.about}}}
-</div>
+{{#if user.about}}
+	<div class='about'>
+		{{{ '<p>' + user.about }}}
+	</div>
+{{/if}}
 
 <style>
 

@@ -6,7 +6,7 @@
 
 		<ul>
 			<li><a class='{{route === "top"  ? "selected" : ""}}' href='/top/1'>top</a></li>
-			<li><a class='{{route === "new"  ? "selected" : ""}}' href='/new/1'>newest</a></li>
+			<li><a class='{{route === "new"  ? "selected" : ""}}' href='/new/1'>new</a></li>
 			<li><a class='{{route === "show" ? "selected" : ""}}' href='/show/1'>show</a></li>
 			<li><a class='{{route === "ask"  ? "selected" : ""}}' href='/ask/1'>ask</a></li>
 			<li><a class='{{route === "job"  ? "selected" : ""}}' href='/job/1'>jobs</a></li>
@@ -34,7 +34,7 @@
 		position: relative;
 		top: -0.1em;
 		box-sizing: border-box;
-		margin: 0 1em 0 0;
+		margin: 0 0.5em 0 0;
 		opacity: 0.6;
 	}
 
@@ -51,7 +51,18 @@
 
 	li {
 		display: inline-block;
-		padding: 0 0.5em;
+		padding: 0 0.2em;
+	}
+
+	@media (min-width: 400px) {
+		.icon {
+			margin: 0 1em 0 0;
+		}
+
+		li {
+			display: inline-block;
+			padding: 0 0.5em;
+		}
 	}
 
 	.selected {

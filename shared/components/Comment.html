@@ -1,4 +1,88 @@
-<article class='comment'>
-	<p>{{{comment.text}}}</p>
-	<p>{{comment.children.length}} children</p> <!-- TODO need recursive components for threading -->
-</article>
+{{#if !comment.deleted}}
+	<article class='comment depth-{{depth}}'>
+		<span class='meta'><a href='/user/{{comment.by}}'>{{comment.by}}</a> {{timebetween(comment.time, now)}} ago</span>
+		<div class='body'>
+			{{{ '<p>' + comment.text }}}
+		</div>
+
+		{{#if comment.children && comment.children.length}}
+			<ul class='children'>
+				{{#each comment.children as child}}
+					<li><:Self comment='{{child}}' depth='{{depth + 1}}'/></li>
+				{{/each}}
+			</ul>
+		{{/if}}
+	</article>
+{{/if}}
+
+<style>
+	.comment {
+		border-top: 1px solid #eee;
+		padding: 1em 0 0 0;
+	}
+
+	.depth-0:first-child {
+		border: none;
+	}
+
+	.comment .children {
+		padding: 0 0 0 1em;
+	}
+
+	@media (min-width: 720px) {
+		.comment .children {
+			padding: 0 0 0 2em;
+		}
+	}
+
+	li {
+		list-style: none;
+	}
+
+	p {
+		line-height: 1.4;
+		font-size: 14px;
+		margin: 0 0 1em 0;
+	}
+
+	pre {
+		white-space: pre-wrap;
+	}
+
+	.meta {
+		display: block;
+		font-size: 14px;
+		color: #888;
+		margin: 0 0 1em 0;
+	}
+
+	a {
+		color: #888;
+	}
+
+	/* prevent crazy overflow layout bug on mobile */
+	.body * {
+		overflow-wrap: break-word;
+	}
+</style>
+
+<script>
+	import timebetween from '../helpers/timebetween.js';
+
+	export default {
+		data () {
+			return {
+				depth: 0,
+				now: Date.now() / 1e3
+			};
+		},
+
+		helpers: {
+			timebetween
+		},
+
+		oncreate () {
+			console.log( `this.get("comment")`, this.get("comment") )
+		}
+	};
+</script>

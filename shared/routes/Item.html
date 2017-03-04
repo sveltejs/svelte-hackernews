@@ -1,4 +1,4 @@
-<article>
+<article class='item'>
 	<a class='main-link' href='{{item.url}}'>
 		<h1>{{item.title}}</h1>
 		{{#if item.url}}<small>{{hostname( item.url )}}</small>{{/if}}
@@ -13,22 +13,33 @@
 	<h3>No comments yet</h3>
 {{/if}}
 
-{{#each comments as comment}}
-	<Comment comment='{{comment}}'/>
-{{/each}}
+<div class='comments'>
+	{{#each comments as comment}}
+		{{#if !comment.deleted}}
+			<Comment comment='{{comment}}'/>
+		{{/if}}
+	{{/each}}
+</div>
 
 <style>
-	article {
-		border-bottom: 4px solid #f4f4f4;
-		margin: 0 0 2em 0;
+	h3 {
+		margin: 0 0 1em 0;
+	}
+
+	.item {
+		border-bottom: 1em solid #f4f4f4;
+		margin: 0 -2em 2em -2em;
+		padding: 0 2em 2em 2em;
 	}
 
 	.main-link {
 		display: block;
+		text-decoration: none;
 	}
 
 	small {
 		display: block;
+		font-size: 14px;
 	}
 
 	.meta {

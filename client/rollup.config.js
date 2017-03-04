@@ -15,6 +15,6 @@ export default {
 			css: process.env.DEVELOPMENT
 		}),
 		buble(),
-		// uglify()
+		uglify()
 	]
 };
