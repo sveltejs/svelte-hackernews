@@ -119,20 +119,15 @@ function serve ( res, data ) {
 		'Content-Type': 'text/html'
 	});
 
-	const start = Date.now();
-	console.log( 'serving...', start );
-
 	let promise = Promise.resolve();
 	templateChunks.forEach( chunk => {
 		promise = promise.then( () => {
 			if ( chunk.type === 'static' ) {
-				console.log( Date.now() - start );
 				res.write( chunk.content );
 			}
 
 			else {
 				return Promise.resolve( data[ chunk.content ] ).then( content => {
-					console.log( Date.now() - start );
 					res.write( content );
 				});
 			}
@@ -140,7 +135,6 @@ function serve ( res, data ) {
 	});
 
 	return promise.then( () => {
-		console.log( 'done:', Date.now() - start );
 		res.end();
 	});
 }
