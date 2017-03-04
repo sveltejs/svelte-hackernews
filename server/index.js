@@ -1,4 +1,5 @@
 const fs = require( 'fs' );
+const path = require( 'path' );
 const LRU = require( 'lru-cache' );
 const express = require( 'express' );
 const compression = require( 'compression' );
@@ -76,8 +77,8 @@ function getUser ( id ) {
 	return users.get( id );
 }
 
-const template = fs.readFileSync( 'server/templates/index.html', 'utf-8' )
-	.replace( '/*__css__*/', fs.readFileSync( 'public/main.css', 'utf-8' ) ); // TODO doesn't make sense for it to be in public...
+const template = fs.readFileSync( `${__dirname}/templates/index.html`, 'utf-8' )
+	.replace( '/*__css__*/', fs.readFileSync( path.resolve( __dirname, `../public/main.css` ), 'utf-8' ) ); // TODO doesn't make sense for it to be in public...
 
 const templateChunks = [];
 const pattern = /__(\w+)__/g;

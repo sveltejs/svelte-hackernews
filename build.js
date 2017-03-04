@@ -5,8 +5,6 @@ const rollup = require( 'rollup' );
 const svelte = require( 'rollup-plugin-svelte' );
 const CleanCSS = require( 'clean-css' );
 
-const shared = path.resolve( __dirname, 'shared' );
-
 function mkdirp ( dir ) {
 	const parent = path.dirname( dir );
 	if ( parent === dir ) return;

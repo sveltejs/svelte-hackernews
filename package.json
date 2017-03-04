@@ -15,22 +15,20 @@
   "name": "svelte-hackernews",
   "version": "1.0.0",
   "description": "Svelte Hacker News clone",
-  "main": "index.js",
   "dependencies": {
     "compression": "^1.6.2",
     "eslint": "^3.16.1",
     "express": "^4.15.0",
     "firebase": "^3.7.0",
     "lru-cache": "^4.0.2",
-    "reify": "^0.4.9",
-    "roadtrip": "^0.3.2",
-    "rollup": "^0.41.4",
-    "rollup-plugin-svelte": "^1.6.0"
+    "roadtrip": "^0.3.2"
   },
   "scripts": {
-    "build": "rollup -c -w",
+    "build:client": "rollup -c",
+    "build:server": "node build",
+    "deploy": "npm run build:server && npm run build:client && now && now alias",
     "dev": "rollup -c -w -e DEVELOPMENT=true",
-    "start": "node build && node server"
+    "start": "node server"
   },
   "repository": {
     "type": "git",
@@ -41,5 +39,13 @@
   "bugs": {
     "url": "https://github.com/sveltejs/svelte-hackernews/issues"
   },
-  "homepage": "https://github.com/sveltejs/svelte-hackernews#readme"
+  "homepage": "https://github.com/sveltejs/svelte-hackernews#readme",
+  "now": {
+    "alias": "svelte-hn.now.sh",
+    "files": [
+      "public",
+      "server",
+      "shared"
+    ]
+  }
 }
