@@ -6,67 +6,15 @@
 
 	<link rel='icon' type='image/png' href='/favicon.png'>
 
-	<title>__TITLE__</title>
-
-	<style>
-		body {
-			margin: 0;
-			font-family: Roboto;
-			background-color: #f4f4f4;
-			height: 101vh; /* prevents scrollbar-induced layout popping */
-		}
-
-		main {
-			position: relative;
-			max-width: 56em;
-			background-color: white;
-			padding: 2em;
-			margin: 0 auto;
-			box-sizing: border-box;
-		}
-
-		.loading::after {
-			content: '';
-			position: absolute;
-			left: 0;
-			top: 0;
-			width: 100%;
-			height: 100%;
-			animation-name: fadein;
-			animation-delay: 0.4s;
-			animation-duration: 0.4s;
-		}
-
-		@keyframes fadein {
-			from { background-color: rgba(255,255,255,0); }
-			to { background-color: rgba(255,255,255,0.6); }
-		}
-
-		h1, h2, h3, h4, h5, h6 {
-			margin: 0 0 0.5em 0;
-			font-weight: 400;
-		}
-
-		h1 {
-			font-size: 1.6em;
-		}
-
-		p {
-			font-size: 14px;
-		}
-
-		a {
-			color: inherit;
-		}
-	</style>
+	<script async defer src='/bundle.js'></script>
 
 	<link href='https://fonts.googleapis.com/css?family=Rajdhani:300,500,700|Roboto:300,300i,400,500' rel='stylesheet'>
 	<link href='/main.css' rel='stylesheet'>
+
+	<title>__TITLE__</title>
 </head>
 <body>
 	<header>__NAV__</header>
 	<main>__ROUTE__</main>
-
-	<script src='/bundle.js'></script>
 </body>
 </html>

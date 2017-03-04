@@ -14,7 +14,8 @@ const app = express();
 app.use( compression({ threshold: 0 }) );
 app.use( express.static( 'public' ) );
 
-const { css } = require( '../shared/App.html' ).renderCss();
+let { css } = require( '../shared/App.html' ).renderCss();
+css = fs.readFileSync( 'server/templates/main.css', 'utf-8' ) + css;
 app.get( '/main.css', ( req, res ) => {
 	res.writeHead( 200, {
 		'Content-Length': css.length,
@@ -34,7 +35,6 @@ lists.forEach( list => {
 		cached[ list.type ] = snapshot.val();
 	});
 });
-
 
 const PAGE_SIZE = 20;
 
@@ -177,6 +177,17 @@ app.get( '/user/:id', ( req, res ) => {
 		});
 	}).catch( err => {
 		console.log( err.stack );
+	});
+});
+
+app.get( '/about', ( req, res ) => {
+	const Nav = require( '../shared/components/Nav.html' );
+	const About = require( '../shared/routes/About.html' );
+
+	serve( res, {
+		title: `Svelte Hacker News`,
+		nav: Nav.render({ route: 'about' }),
+		route: About.render()
 	});
 });
 

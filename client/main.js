@@ -3,6 +3,7 @@ import { getItem, getUser, getPage } from './store.js';
 import Item from '../shared/routes/Item.html';
 import List from '../shared/routes/List.html';
 import User from '../shared/routes/User.html';
+import About from '../shared/routes/About.html';
 import Nav from '../shared/components/Nav.html';
 import lists from '../shared/lists.js';
 
@@ -120,6 +121,30 @@ roadtrip.add( '/user/:id', {
 	},
 	leave () {
 		main.classList.add( 'loading' );
+	}
+});
+
+roadtrip.add( '/about', {
+	enter ( route ) {
+		nav.set({ route: 'about' });
+
+		if ( route.isInitial ) return; // see note above
+
+		document.title = `Svelte Hacker News`;
+
+		if ( view ) {
+			view.destroy();
+		} else {
+			main.innerHTML = '';
+		}
+
+		main.classList.remove( 'loading' );
+
+		view = new About({
+			target: main
+		});
+
+		window.scrollTo( route.scrollX, route.scrollY );
 	}
 });
 

@@ -1,21 +1,21 @@
-<header>
-	<nav>
-		<div class='icon'>
-			<span>s</span>
-		</div>
+<nav>
+	<div class='icon'>
+		<span>s</span>
+	</div>
 
-		<ul>
-			<li><a class='{{route === "top"  ? "selected" : ""}}' href='/top/1'>top</a></li>
-			<li><a class='{{route === "new"  ? "selected" : ""}}' href='/new/1'>new</a></li>
-			<li><a class='{{route === "show" ? "selected" : ""}}' href='/show/1'>show</a></li>
-			<li><a class='{{route === "ask"  ? "selected" : ""}}' href='/ask/1'>ask</a></li>
-			<li><a class='{{route === "job"  ? "selected" : ""}}' href='/job/1'>jobs</a></li>
-		</ul>
-	</nav>
-</header>
+	<ul>
+		<li><a class='{{route === "top"  ? "selected" : ""}}' href='/top/1'>top</a></li>
+		<li><a class='{{route === "new"  ? "selected" : ""}}' href='/new/1'>new</a></li>
+		<li><a class='{{route === "show" ? "selected" : ""}}' href='/show/1'>show</a></li>
+		<li><a class='{{route === "ask"  ? "selected" : ""}}' href='/ask/1'>ask</a></li>
+		<li><a class='{{route === "job"  ? "selected" : ""}}' href='/job/1'>jobs</a></li>
+
+		<li class='about'><a class='{{route === "about"  ? "selected" : ""}}' href='/about'>about</a></li>
+	</ul>
+</nav>
 
 <style>
-	header {
+	nav {
 		background-color: rgb(170,30,30);
 		color: white;
 		font-family: Rajdhani;
@@ -52,6 +52,10 @@
 	li {
 		display: inline-block;
 		padding: 0 0.2em;
+	}
+
+	.about {
+		float: right;
 	}
 
 	@media (min-width: 400px) {

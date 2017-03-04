@@ -27,9 +27,8 @@
     "rollup-plugin-svelte": "^1.6.0"
   },
   "scripts": {
-    "build": "webpack --config client/webpack.config.js",
-    "dev:webpack": "webpack --config client/webpack.config.js --watch",
-    "dev": "rollup -c client/rollup.config.js -w -e DEVELOPMENT=true",
+    "build": "rollup -c -w",
+    "dev": "rollup -c -w -e DEVELOPMENT=true",
     "start": "node server"
   },
   "repository": {

@@ -1,5 +1,3 @@
-import getJSON from './utils/getJSON.js';
-
 const itemCache = {};
 
 export function getItem ( id ) {
@@ -60,4 +58,15 @@ export function getUser ( id ) {
 	}
 
 	return userCache[ id ];
+}
+
+function getJSON ( url ) {
+	return new Promise( ( fulfil, reject ) => {
+		const xhr = new XMLHttpRequest();
+		xhr.onload = () => fulfil( JSON.parse( xhr.responseText ) );
+		xhr.onerror = reject;
+
+		xhr.open( 'GET', url );
+		xhr.send();
+	});
 }

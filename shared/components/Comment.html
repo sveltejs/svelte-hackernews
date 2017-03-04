@@ -1,5 +1,5 @@
 {{#if !comment.deleted}}
-	<article class='comment depth-{{depth}}'>
+	<article class='comment'>
 		<span class='meta'><a href='/user/{{comment.by}}'>{{comment.by}}</a> {{timebetween(comment.time, now)}} ago</span>
 		<div class='body'>
 			{{{ '<p>' + comment.text }}}
@@ -8,7 +8,7 @@
 		{{#if comment.children && comment.children.length}}
 			<ul class='children'>
 				{{#each comment.children as child}}
-					<li><:Self comment='{{child}}' depth='{{depth + 1}}'/></li>
+					<li><:Self comment='{{child}}'/></li>
 				{{/each}}
 			</ul>
 		{{/if}}
@@ -19,10 +19,6 @@
 	.comment {
 		border-top: 1px solid #eee;
 		padding: 1em 0 0 0;
-	}
-
-	.depth-0:first-child {
-		border: none;
 	}
 
 	.comment .children {
@@ -72,17 +68,12 @@
 	export default {
 		data () {
 			return {
-				depth: 0,
 				now: Date.now() / 1e3
 			};
 		},
 
 		helpers: {
 			timebetween
-		},
-
-		oncreate () {
-			console.log( `this.get("comment")`, this.get("comment") )
 		}
 	};
 </script>
