@@ -24,6 +24,7 @@
     "roadtrip": "^0.3.2"
   },
   "scripts": {
+    "build:both": "npm run build:server && npm run build:client",
     "build:client": "rollup -c",
     "build:server": "node build",
     "deploy": "npm run build:server && npm run build:client && now && now alias",

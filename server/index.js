@@ -115,9 +115,21 @@ function serveJSON ( res, data ) {
 	res.end( json );
 }
 
+const preload = [
+	`</bundle.js>; rel=preload; as=script`,
+	// `</main.css>; rel=preload; as=style`, // styles are currently inlined...
+
+	// only preload the essential fonts for initial render
+	`</fonts/rajdhani-light.woff2>; rel=preload; as=font; type='font/woff2'`,
+	`</fonts/roboto-regular.woff2>; rel=preload; as=font; type='font/woff2'`
+].join( ', ' );
+
+console.log( `preload`, preload )
+
 function serve ( res, data ) {
 	res.writeHead( 200, {
-		'Content-Type': 'text/html'
+		'Content-Type': 'text/html',
+		Link: preload
 	});
 
 	let promise = Promise.resolve();
