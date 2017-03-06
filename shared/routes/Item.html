@@ -5,6 +5,10 @@
 	</a>
 
 	<p class='meta'>{{item.score}} points by <a href='/user/{{item.by}}'>{{item.by}}</a> {{timebetween( item.time, now )}} ago</p>
+
+	{{#if item.text}}
+		{{{ '<p>' + item.text }}}
+	{{/if}}
 </article>
 
 {{#if item.descendants}}

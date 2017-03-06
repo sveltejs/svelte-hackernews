@@ -1,6 +1,6 @@
 <article>
 	<h2>
-		<a href='{{item.url}}'>{{item.title}} {{#if item.url}}<small>({{hostname( item.url )}})</small>{{/if}}</a>
+		<a href='{{item.url ? item.url : `/item/${item.id}` }}'>{{item.title}} {{#if item.url}}<small>({{hostname( item.url )}})</small>{{/if}}</a>
 	</h2>
 
 	<p>
