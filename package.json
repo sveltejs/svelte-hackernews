@@ -28,7 +28,7 @@
     "build:client": "rollup -c",
     "build:server": "node build",
     "deploy": "npm run build:server && npm run build:client && now && now alias",
-    "dev": "rollup -c -w -e DEVELOPMENT=true",
+    "dev": "rollup -c -w -e DEVELOPMENT=true & node server",
     "start": "node server"
   },
   "repository": {

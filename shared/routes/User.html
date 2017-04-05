@@ -3,9 +3,9 @@
 <p>...joined <strong>{{ago}}</strong>, and has <strong>{{user.karma}}</strong> karma</p>
 
 <p>
-	<a href='https://news.ycombinator.com/submitted?id=dang'>submissions</a> /
-	<a href='https://news.ycombinator.com/threads?id=dang'>comments</a> /
-	<a href='https://news.ycombinator.com/favorites?id=dang'>favourites</a>
+	<a href='https://news.ycombinator.com/submitted?id={{user.id}}'>submissions</a> /
+	<a href='https://news.ycombinator.com/threads?id={{user.id}}'>comments</a> /
+	<a href='https://news.ycombinator.com/favorites?id={{user.id}}'>favourites</a>
 </p>
 
 {{#if user.about}}
