@@ -1,6 +1,7 @@
 .DS_Store
 node_modules
-public/bundle.js
+public/bundle.*
 public/main.css
+public/sw.*
 server/routes
 server/components
