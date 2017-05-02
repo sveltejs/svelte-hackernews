@@ -77,8 +77,7 @@ function getUser ( id ) {
 	return users.get( id );
 }
 
-const template = fs.readFileSync( `${__dirname}/templates/index.html`, 'utf-8' )
-	.replace( '/*__css__*/', fs.readFileSync( path.resolve( __dirname, `../public/main.css` ), 'utf-8' ) ); // TODO doesn't make sense for it to be in public...
+const template = fs.readFileSync( `${__dirname}/templates/index.html`, 'utf-8' );
 
 const templateChunks = [];
 const pattern = /__(\w+)__/g;
@@ -117,14 +116,12 @@ function serveJSON ( res, data ) {
 
 const preload = [
 	`</bundle.js>; rel=preload; as=script`,
-	// `</main.css>; rel=preload; as=style`, // styles are currently inlined...
+	`</main.css>; rel=preload; as=style`,
 
 	// only preload the essential fonts for initial render
 	`</fonts/rajdhani-light.woff2>; rel=preload; as=font; type='font/woff2'`,
 	`</fonts/roboto-regular.woff2>; rel=preload; as=font; type='font/woff2'`
 ].join( ', ' );
-
-console.log( `preload`, preload )
 
 function serve ( res, data ) {
 	res.writeHead( 200, {
