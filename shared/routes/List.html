@@ -1,5 +1,7 @@
 {{#each items as item, i}}
-	<ItemSummary item='{{item}}' index='{{start + i}}'/>
+	{{#if item}} <!-- sometimes we get bad data? TODO investigate -->
+		<ItemSummary item='{{item}}' index='{{start + i}}'/>
+	{{/if}}
 {{/each}}
 
 {{#if next}}

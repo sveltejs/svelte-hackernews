@@ -20,6 +20,8 @@ export function getItem ( id ) {
 export function getPage ( type, page ) {
 	return getJSON( `/${type}/${page}.json` ).then( data => {
 		data.items.forEach( item => {
+			if ( !item || !item.id ) return; // TODO why are we getting bad data?
+
 			const promise = itemCache[ item.id ] = Promise.resolve( item );
 
 			// remove from cache after 60 seconds
