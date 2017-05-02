@@ -16,16 +16,23 @@ const nav = new Nav({
 
 let view;
 
+roadtrip.add( '/', {
+	enter ( route ) {
+		route.wasInitial = route.isInitial; // skip JS on redirect if this is initial route
+		roadtrip.goto( '/top/1', { invisible: true });
+	}
+});
+
 // lists
 lists.forEach( list => {
 	roadtrip.add( `/${list.type}/:page`, {
-		enter ( route ) {
+		enter ( route, prev ) {
 			nav.set({ route: list.type });
 
 			// we don't actually need to do anything, because the page
 			// is completely static. This may change in a future version
 			// (i.e. if we subscribe to realtime updates)
-			if ( route.isInitial ) return;
+			if ( route.isInitial || prev.wasInitial ) return;
 
 			document.title = 'Svelte Hacker News';
 

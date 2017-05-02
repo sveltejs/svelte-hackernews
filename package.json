@@ -22,7 +22,7 @@
     "express": "^4.15.0",
     "firebase": "^3.7.0",
     "lru-cache": "^4.0.2",
-    "roadtrip": "^0.4.1"
+    "roadtrip": "^0.5.0"
   },
   "scripts": {
     "build:all": "npm run build:server && npm run build:client && npm run build:sw",
