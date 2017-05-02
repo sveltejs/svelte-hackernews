@@ -48,7 +48,7 @@
 
 body {
 	margin: 0;
-	font-family: Roboto;
+	font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 	background-color: #f4f4f4;
 	height: 101vh; /* prevents scrollbar-induced layout popping */
 }

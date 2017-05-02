@@ -16,12 +16,6 @@ const nav = new Nav({
 
 let view;
 
-roadtrip.add( '/', {
-	enter () {
-		roadtrip.goto( '/top/1' );
-	}
-});
-
 // lists
 lists.forEach( list => {
 	roadtrip.add( `/${list.type}/:page`, {

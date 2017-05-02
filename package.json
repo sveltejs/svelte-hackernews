@@ -8,6 +8,7 @@
     "rollup-plugin-buble": "^0.15.0",
     "rollup-plugin-commonjs": "^8.0.2",
     "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-replace": "^1.1.1",
     "rollup-plugin-svelte": "^1.8.1",
     "rollup-plugin-uglify": "^1.0.1",
     "rollup-watch": "^3.2.2"
@@ -24,11 +25,14 @@
     "roadtrip": "^0.4.1"
   },
   "scripts": {
-    "build:both": "npm run build:server && npm run build:client",
-    "build:client": "rollup -c",
+    "build:all": "npm run build:server && npm run build:client && npm run build:sw",
     "build:server": "node build",
-    "deploy": "npm run build:server && npm run build:client && now && now alias",
-    "dev": "rollup -c -w --environment DEVELOPMENT:true & node server",
+    "build:client": "rollup -c client/rollup.config.js",
+    "build:sw": "rollup -c service-worker/rollup.config.js",
+    "deploy": "npm run build:all && now && now alias",
+    "dev:client": "rollup -c client/rollup.config.js -w --environment DEVELOPMENT:true",
+    "dev:sw": "rollup -c service-worker/rollup.config.js -w --environment DEVELOPMENT:true",
+    "dev": "npm run build:server && npm run dev:client & npm run dev:sw & node server",
     "start": "node server"
   },
   "repository": {

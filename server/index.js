@@ -108,7 +108,8 @@ function serveJSON ( res, data ) {
 
 	res.writeHead( 200, {
 		'Content-Length': json.length,
-		'Content-Type': 'application/json'
+		'Content-Type': 'application/json',
+		'Cache-Control': 'max-age=30'
 	});
 
 	res.end( json );
@@ -123,9 +124,10 @@ const preload = [
 	`</fonts/roboto-regular.woff2>; rel=preload; as=font; type='font/woff2'`
 ].join( ', ' );
 
-function serve ( res, data ) {
+function serve ( res, data, maxAge = 30 ) {
 	res.writeHead( 200, {
 		'Content-Type': 'text/html',
+		'Cache-Control': `max-age=${maxAge}`,
 		Link: preload
 	});
 
@@ -149,8 +151,21 @@ function serve ( res, data ) {
 	});
 }
 
+function serveListPage ( req, res, type, page ) {
+	const Nav = require( './components/Nav.js' );
+	const List = require( './routes/List.js' );
+
+	serve( res, {
+		title: 'Svelte Hacker News',
+		nav: Nav.render({ route: type }),
+		route: getPage( type, page ).then( data => List.render( data ) )
+	}).catch( err => {
+		console.log( err.stack );
+	});
+}
+
 app.get( '/', ( req, res ) => {
-	res.redirect( '/top/1' );
+	serveListPage( req, res, 'top', 1 );
 });
 
 lists.forEach( list => {
@@ -159,16 +174,7 @@ lists.forEach( list => {
 	});
 
 	app.get( `/${list.type}/:page`, ( req, res ) => {
-		const Nav = require( './components/Nav.js' );
-		const List = require( './routes/List.js' );
-
-		serve( res, {
-			title: 'Svelte Hacker News',
-			nav: Nav.render({ route: list.type }),
-			route: getPage( list.type, req.params.page ).then( data => List.render( data ) )
-		}).catch( err => {
-			console.log( err.stack );
-		});
+		serveListPage( req, res, list.type, req.params.page );
 	});
 });
 
@@ -216,7 +222,7 @@ app.get( '/about', ( req, res ) => {
 		title: `Svelte Hacker News`,
 		nav: Nav.render({ route: 'about' }),
 		route: About.render()
-	});
+	}, 60 * 60 * 24 * 1000 );
 });
 
 function getComment ( id ) {
