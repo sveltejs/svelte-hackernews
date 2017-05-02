@@ -33,7 +33,8 @@
     "dev:client": "rollup -c client/rollup.config.js -w --environment DEVELOPMENT:true",
     "dev:sw": "rollup -c service-worker/rollup.config.js -w --environment DEVELOPMENT:true",
     "dev": "npm run build:server && npm run dev:client & npm run dev:sw & node server",
-    "start": "node server"
+    "start": "node server",
+    "lint": "eslint client && eslint server"
   },
   "repository": {
     "type": "git",

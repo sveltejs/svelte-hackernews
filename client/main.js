@@ -150,3 +150,9 @@ roadtrip.add( '/about', {
 });
 
 roadtrip.start();
+
+// preload some data for snappy navigation
+let promise = Promise.resolve();
+lists.forEach( list => {
+	promise = promise.then( () => getPage( list.type, 1 ) );
+});

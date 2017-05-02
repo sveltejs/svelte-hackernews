@@ -2,7 +2,7 @@ const itemCache = {};
 
 export function getItem ( id ) {
 	if ( !itemCache[ id ] ) {
-		const promise = getJSON( `https://hacker-news.firebaseio.com/v0/item/${id}.json` ).catch( err => {
+		const promise = getJSON( `https://hacker-news.firebaseio.com/v0/item/${id}.json` ).catch( () => {
 			itemCache[ id ] = null;
 		});
 
@@ -38,7 +38,7 @@ const commentsCache = {};
 
 export function getComments ( id ) {
 	if ( !commentsCache[ id ] ) {
-		const promise = getJSON( `/comments/${id}.json` ).catch( err => {
+		const promise = getJSON( `/comments/${id}.json` ).catch( () => {
 			commentsCache[ id ] = null;
 		});
 
@@ -52,7 +52,7 @@ const userCache = {};
 
 export function getUser ( id ) {
 	if ( !userCache[ id ] ) {
-		const promise = getJSON( `/user/${id}.json` ).catch( err => {
+		const promise = getJSON( `/user/${id}.json` ).catch( () => {
 			userCache[ id ] = null;
 		});
 
@@ -62,13 +62,33 @@ export function getUser ( id ) {
 	return userCache[ id ];
 }
 
-function getJSON ( url ) {
-	return new Promise( ( fulfil, reject ) => {
-		const xhr = new XMLHttpRequest();
-		xhr.onload = () => fulfil( JSON.parse( xhr.responseText ) );
-		xhr.onerror = reject;
+const urlCache = {};
 
-		xhr.open( 'GET', url );
-		xhr.send();
-	});
+function getJSON ( url ) {
+	if ( !urlCache[ url ] ) {
+		const promise = new Promise( ( fulfil, reject ) => {
+			const xhr = new XMLHttpRequest();
+
+			xhr.onload = () => {
+				fulfil( JSON.parse( xhr.responseText ) );
+			};
+
+			xhr.onerror = err => {
+				urlCache[ url ] = null;
+				reject( err );
+			};
+
+			xhr.open( 'GET', url );
+			xhr.send();
+		});
+
+		urlCache[ url ] = promise;
+
+		// remove from cache after 60 seconds
+		setTimeout( () => {
+			if ( urlCache[ url ] === promise ) urlCache[ url ] = null;
+		}, 30 * 1000 );
+	}
+
+	return urlCache[ url ];
 }
