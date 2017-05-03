@@ -183,7 +183,6 @@ function serveListPage ( req, res, type, page ) {
 }
 
 app.get( '/shell', ( req, res ) => {
-	console.log( 'serving shell' );
 	serveListPage( req, res, null );
 });
 
