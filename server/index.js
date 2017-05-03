@@ -131,7 +131,7 @@ function serveJSON ( res, data ) {
 	res.writeHead( 200, {
 		'Content-Length': json.length,
 		'Content-Type': 'application/json',
-		'Cache-Control': 'max-age=30'
+		'Cache-Control': 'no-cache'
 	});
 
 	res.end( json );
