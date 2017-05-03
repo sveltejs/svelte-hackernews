@@ -1,21 +1,17 @@
 const fs = require( 'fs' );
-const path = require( 'path' );
 const LRU = require( 'lru-cache' );
 const express = require( 'express' );
 const compression = require( 'compression' );
 
 const dev = process.env.DEV;
-console.log( `dev`, dev )
 
 // TODO this is unfortunate... would be nice to have a neater solution
 const hashed = dev ? {
 	bundle: '/bundle.js',
-	sw: '/sw.js',
 	css: '/main.css'
 } : {
-	bundle: require( './manifests/bundle.json' )[ 'bundle.js' ].replace( 'dist', '' ),
-	sw: require( './manifests/sw.json' )[ 'sw.js' ].replace( 'dist', '' ),
-	css: require( './manifests/css.json' )[ 'main.css' ].replace( 'dist', '' )
+	bundle: require( './manifests/bundle.json' )[ 'bundle.js' ].replace( 'client/dist', '' ),
+	css: require( './manifests/css.json' )[ 'main.css' ].replace( 'client/dist', '' )
 };
 
 const db = require( './db.js' );
@@ -24,8 +20,9 @@ const lists = require( '../shared/lists.js' );
 const app = express();
 
 app.use( compression({ threshold: 0 }) );
-app.use( express.static( 'dist', { maxAge: '1y' }) );
-app.use( express.static( 'public', { maxAge: '1y' }) );
+app.use( express.static( 'service-worker/dist' ) );
+app.use( express.static( 'client/dist', { maxAge: dev ? '1s' : '1y' }) );
+app.use( express.static( 'public', { maxAge: dev ? '1s' : '1y' }) );
 
 const cached = {};
 lists.forEach( list => {
@@ -97,7 +94,6 @@ if ( !process.env.DEV ) {
 	// TODO come up with a better approach than this massive hack...
 	template = template
 		.replace( '/bundle.js', hashed.bundle )
-		.replace( '/sw.js', hashed.sw )
 		.replace( '/main.css', hashed.css );
 }
 
@@ -180,14 +176,23 @@ function serveListPage ( req, res, type, page ) {
 	serve( res, {
 		title: 'Svelte Hacker News',
 		nav: Nav.render({ route: type }),
-		route: getPage( type, page ).then( data => List.render( data ) )
+		route: type ? getPage( type, page ).then( data => List.render( data ) ) : ''
 	}).catch( err => {
 		console.log( err.stack );
 	});
 }
 
+app.get( '/shell', ( req, res ) => {
+	console.log( 'serving shell' );
+	serveListPage( req, res, null );
+});
+
 app.get( '/', ( req, res ) => {
-	serveListPage( req, res, 'top', 1 );
+	if ( req.query.shell ) {
+		serveListPage( req, res, null );
+	} else {
+		serveListPage( req, res, 'top', 1 );
+	}
 });
 
 lists.forEach( list => {

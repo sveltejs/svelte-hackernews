@@ -29,12 +29,12 @@
   "scripts": {
     "build:all": "rm -rf dist && mkdir -p dist server/manifests && npm run build:server && npm run build:client && npm run build:sw",
     "build:server": "node build",
-    "build:client": "rollup -c client/rollup.config.js",
+    "build:client": "rm -rf client/dist && rollup -c client/rollup.config.js",
     "build:sw": "rollup -c service-worker/rollup.config.js",
     "deploy": "npm run build:all && now && now alias",
-    "dev:client": "export DEV=true && rollup -c client/rollup.config.js -w",
+    "dev:client": "rm -rf client/dist && export DEV=true && rollup -c client/rollup.config.js -w",
     "dev:sw": "export DEV=true && rollup -c service-worker/rollup.config.js -w",
-    "dev": "export DEV=true && rm -rf dist && npm run build:server && npm run dev:client & npm run dev:sw & export DEV=true && node server",
+    "dev": "export DEV=true && npm run build:server && npm run dev:client & npm run dev:sw & export DEV=true && node server",
     "start": "node server",
     "lint": "eslint client && eslint server"
   },

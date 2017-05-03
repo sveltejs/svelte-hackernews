@@ -1,11 +1,11 @@
 import roadtrip from 'roadtrip';
 import { getItem, getUser, getPage } from './store.js';
-import Item from '../shared/routes/Item.html';
-import List from '../shared/routes/List.html';
-import User from '../shared/routes/User.html';
-import About from '../shared/routes/About.html';
-import Nav from '../shared/components/Nav.html';
-import lists from '../shared/lists.js';
+import Item from '../../shared/routes/Item.html';
+import List from '../../shared/routes/List.html';
+import User from '../../shared/routes/User.html';
+import About from '../../shared/routes/About.html';
+import Nav from '../../shared/components/Nav.html';
+import lists from '../../shared/lists.js';
 
 const header = document.querySelector( 'header' );
 const main = document.querySelector( 'main' );
@@ -32,7 +32,7 @@ lists.forEach( list => {
 			// we don't actually need to do anything, because the page
 			// is completely static. This may change in a future version
 			// (i.e. if we subscribe to realtime updates)
-			if ( route.isInitial || prev.wasInitial ) return;
+			if ( ( route.isInitial || prev.wasInitial ) && main.firstChild ) return;
 
 			document.title = 'Svelte Hacker News';
 
@@ -98,7 +98,7 @@ roadtrip.add( '/user/:id', {
 		return getUser( route.params.id ).then( user => {
 			nav.set({ route: 'user' });
 
-			if ( route.isInitial ) return; // see note above
+			if ( route.isInitial && main.firstChild ) return; // see note above
 
 			document.title = `Profile: ${user.id} | Svelte Hacker News`;
 

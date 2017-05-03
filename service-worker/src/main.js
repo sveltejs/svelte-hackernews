@@ -42,14 +42,30 @@ self.addEventListener( 'activate', event => {
 	);
 });
 
+let shell;
+
 self.addEventListener( 'fetch', event => {
 	if ( !/^https?/.test( event.request.url ) ) return;
+
+	// don't cache .json files
+	if ( /\.json$/.test( event.request.url ) ) return;
+
+	const path = event.request.url.replace( self.location.origin, '' ).replace( /\?.+/, '' );
+	const match = /^\/(?:(top|new|ask|show|job)\/(\d+))?$/.exec( path );
+	if ( match ) {
+		// kick off request for JSON data
+		fetch( `${self.location.origin}/${match[1] || 'top'}/${match[2] || 1}` );
+
+		if ( !shell ) shell = fetch( `${self.location.origin}/shell` );
+		event.respondWith( shell.then( response => response.clone() ) );
+		return;
+	}
 
 	event.respondWith(
 		caches.open( CACHE_NAME )
 			.then( cache => cache.match( event.request ) )
 			.then( response => {
-				if ( response ) return response;
+				if ( response ) return response.clone();
 
 				const fetchRequest = event.request.clone();
 
@@ -60,12 +76,10 @@ self.addEventListener( 'fetch', event => {
 							return response;
 						}
 
-						const responseToCache = response.clone();
-
 						caches.open( CACHE_NAME )
 							.then( cache => {
 								// no need to wait on this before responding
-								cache.put( event.request, responseToCache ).catch( err => {
+								cache.put( event.request, response ).catch( err => {
 									console.error( `failed to cache ${event.request.url}: ${err.stack}` );
 								});
 							});

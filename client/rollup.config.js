@@ -12,8 +12,8 @@ const dev = !!process.env.DEV;
 const globalStyles = fs.readFileSync( 'server/templates/main.css', 'utf-8' );
 
 export default {
-	entry: 'client/main.js',
-	dest: 'dist/bundle.js', // otherwise rollup-watch complains
+	entry: 'client/src/main.js',
+	dest: 'client/dist/bundle.js', // otherwise rollup-watch complains
 	format: 'iife',
 	plugins: [
 		nodeResolve(),
@@ -22,20 +22,26 @@ export default {
 			css: componentStyles => {
 				let styles = globalStyles.replace( '__components__', componentStyles );
 
+				try {
+					fs.mkdirSync( 'client/dist' );
+				} catch ( err ) {
+					// noop
+				}
+
 				if ( dev ) {
-					fs.writeFileSync( `dist/main.css`, styles );
+					fs.writeFileSync( `client/dist/main.css`, styles );
 				} else {
 					styles = new CleanCSS().minify( styles ).styles;
 
 					const hash = hasha( styles, { algorithm: 'md5' });
-					fs.writeFileSync( `dist/main.${hash}.css`, styles );
-					fs.writeFileSync( `server/manifests/css.json`, JSON.stringify({ 'main.css': `dist/main.${hash}.css` }) );
+					fs.writeFileSync( `client/dist/main.${hash}.css`, styles );
+					fs.writeFileSync( `server/manifests/css.json`, JSON.stringify({ 'main.css': `client/dist/main.${hash}.css` }) );
 				}
 			}
 		}),
 		buble(),
 		!dev && hash({
-			dest: 'dist/bundle.[hash].js',
+			dest: 'client/dist/bundle.[hash].js',
 			manifest: 'server/manifests/bundle.json',
 			manifestKey: 'bundle.js'
 		}),
