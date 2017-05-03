@@ -27,7 +27,7 @@
     "roadtrip": "^0.5.0"
   },
   "scripts": {
-    "build:all": "rm -rf dist && npm run build:server && npm run build:client && npm run build:sw",
+    "build:all": "rm -rf dist && mkdir -p dist && npm run build:server && npm run build:client && npm run build:sw",
     "build:server": "node build",
     "build:client": "rollup -c client/rollup.config.js",
     "build:sw": "rollup -c service-worker/rollup.config.js",

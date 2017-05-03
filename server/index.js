@@ -8,10 +8,14 @@ const dev = process.env.DEV;
 console.log( `dev`, dev )
 
 // TODO this is unfortunate... would be nice to have a neater solution
-const hashed = {
-	'bundle.js': require( './manifests/bundle.json' )[ 'bundle.js' ].replace( '/dist', '' ),
-	'sw.js': require( './manifests/sw.json' )[ 'sw.js' ].replace( '/dist', '' ),
-	'main.css': require( './manifests/css.json' )[ 'main.css' ]
+const hashed = dev ? {
+	bundle: '/bundle.js',
+	sw: '/sw.js',
+	css: '/main.css'
+} : {
+	bundle: require( './manifests/bundle.json' )[ 'bundle.js' ].replace( 'dist', '' ),
+	sw: require( './manifests/sw.json' )[ 'sw.js' ].replace( 'dist', '' ),
+	css: require( './manifests/css.json' )[ 'main.css' ].replace( 'dist', '' )
 };
 
 const db = require( './db.js' );
@@ -90,10 +94,11 @@ function getUser ( id ) {
 
 let template = fs.readFileSync( `${__dirname}/templates/index.html`, 'utf-8' );
 if ( !process.env.DEV ) {
+	// TODO come up with a better approach than this massive hack...
 	template = template
-		.replace( '/bundle.js', hashed[ 'bundle.js' ] )
-		.replace( '/sw.js', hashed[ 'sw.js' ] )
-		.replace( '/main.css', hashed[ 'main.css' ] );
+		.replace( '/bundle.js', hashed.bundle )
+		.replace( '/sw.js', hashed.sw )
+		.replace( '/main.css', hashed.css );
 }
 
 const templateChunks = [];
@@ -133,8 +138,8 @@ function serveJSON ( res, data ) {
 }
 
 const preload = [
-	`</bundle.js>; rel=preload; as=script`,
-	`</main.css>; rel=preload; as=style`,
+	`<${hashed.bundle}>; rel=preload; as=script`,
+	`<${hashed.css}>; rel=preload; as=style`,
 
 	// only preload the essential fonts for initial render
 	`</fonts/rajdhani-light.woff2>; rel=preload; as=font; type='font/woff2'`,

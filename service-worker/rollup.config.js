@@ -8,16 +8,20 @@ const dev = !!process.env.DEV;
 
 console.log( `creating ${dev ? 'development' : 'production'} service worker` ); // eslint-disable-line no-console
 
+const bundle = dev ?
+	'/bundle.js' :
+	require( '../server/manifests/bundle.json' )[ 'bundle.js' ].replace( 'dist', '' );
+
+const css = dev ?
+	'/main.css' :
+	require( '../server/manifests/css.json' )[ 'main.css' ].replace( 'dist', '' );
+
 const manifest = [].concat(
 	// routes
 	// TODO create an empty app shell instead...
 	'/',
-
-	// js
-	'/bundle.js',
-
-	// css
-	'/main.css',
+	bundle,
+	css,
 
 	// fonts
 	glob.sync( 'fonts/**/*.woff?(2)', { cwd: 'public' }).map( x => `/${x}` )

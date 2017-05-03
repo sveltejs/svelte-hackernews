@@ -29,7 +29,7 @@ export default {
 
 					const hash = hasha( styles, { algorithm: 'md5' });
 					fs.writeFileSync( `dist/main.${hash}.css`, styles );
-					fs.writeFileSync( `server/manifests/css.json`, JSON.stringify({ 'main.css': `main.${hash}.css` }) );
+					fs.writeFileSync( `server/manifests/css.json`, JSON.stringify({ 'main.css': `dist/main.${hash}.css` }) );
 				}
 			}
 		}),
