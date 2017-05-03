@@ -4,13 +4,24 @@ const LRU = require( 'lru-cache' );
 const express = require( 'express' );
 const compression = require( 'compression' );
 
+const dev = process.env.DEV;
+console.log( `dev`, dev )
+
+// TODO this is unfortunate... would be nice to have a neater solution
+const hashed = {
+	'bundle.js': require( './manifests/bundle.json' )[ 'bundle.js' ].replace( '/dist', '' ),
+	'sw.js': require( './manifests/sw.json' )[ 'sw.js' ].replace( '/dist', '' ),
+	'main.css': require( './manifests/css.json' )[ 'main.css' ]
+};
+
 const db = require( './db.js' );
 const lists = require( '../shared/lists.js' );
 
 const app = express();
 
 app.use( compression({ threshold: 0 }) );
-app.use( express.static( 'public' ) );
+app.use( express.static( 'dist', { maxAge: '1y' }) );
+app.use( express.static( 'public', { maxAge: '1y' }) );
 
 const cached = {};
 lists.forEach( list => {
@@ -77,7 +88,13 @@ function getUser ( id ) {
 	return users.get( id );
 }
 
-const template = fs.readFileSync( `${__dirname}/templates/index.html`, 'utf-8' );
+let template = fs.readFileSync( `${__dirname}/templates/index.html`, 'utf-8' );
+if ( !process.env.DEV ) {
+	template = template
+		.replace( '/bundle.js', hashed[ 'bundle.js' ] )
+		.replace( '/sw.js', hashed[ 'sw.js' ] )
+		.replace( '/main.css', hashed[ 'main.css' ] );
+}
 
 const templateChunks = [];
 const pattern = /__(\w+)__/g;

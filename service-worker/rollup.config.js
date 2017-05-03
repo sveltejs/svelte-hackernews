@@ -1,3 +1,4 @@
+import hash from 'rollup-plugin-hash';
 import replace from 'rollup-plugin-replace';
 import buble from 'rollup-plugin-buble';
 import uglify from 'rollup-plugin-uglify';
@@ -24,7 +25,7 @@ const manifest = [].concat(
 
 export default {
 	entry: 'service-worker/main.js',
-	dest: 'public/sw.js',
+	dest: 'dist/sw.js', // otherwise rollup-watch complains
 	format: 'iife',
 	plugins: [
 		replace({
@@ -32,6 +33,11 @@ export default {
 			__MANIFEST__: JSON.stringify( manifest )
 		}),
 		buble(),
+		!dev && hash({
+			dest: 'dist/sw.[hash].js',
+			manifest: 'server/manifests/sw.json',
+			manifestKey: 'sw.js'
+		}),
 		!dev && uglify()
 	],
 	sourceMap: true
