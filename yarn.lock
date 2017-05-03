@@ -1528,9 +1528,9 @@ rimraf@^2.2.8:
   dependencies:
     glob "^7.0.5"
 
-roadtrip@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/roadtrip/-/roadtrip-0.5.0.tgz#ac1837ffdc97fcfa78cadf853538c6b9c4485282"
+roadtrip@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/roadtrip/-/roadtrip-0.5.1.tgz#a422836368af0636334f3dc340f624fb9aba76fd"
 
 rollup-plugin-buble@^0.15.0:
   version "0.15.0"

@@ -24,7 +24,7 @@
     "express": "^4.15.0",
     "firebase": "^3.7.0",
     "lru-cache": "^4.0.2",
-    "roadtrip": "^0.5.0"
+    "roadtrip": "^0.5.1"
   },
   "scripts": {
     "build:all": "rm -rf dist && mkdir -p dist server/manifests && npm run build:server && npm run build:client && npm run build:sw",
