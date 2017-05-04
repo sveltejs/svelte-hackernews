@@ -53,6 +53,7 @@
     "files": [
       "public",
       "client/dist",
+      "service-worker/dist",
       "server",
       "shared"
     ]
