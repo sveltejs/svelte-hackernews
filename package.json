@@ -52,7 +52,7 @@
     "alias": "hn.svelte.technology",
     "files": [
       "public",
-      "dist",
+      "client/dist",
       "server",
       "shared"
     ]
