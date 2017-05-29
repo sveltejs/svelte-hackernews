@@ -135,11 +135,7 @@ function serveJSON ( res, data ) {
 
 const preload = [
 	`<${hashed.bundle}>; rel=preload; as=script`,
-	`<${hashed.css}>; rel=preload; as=style`,
-
-	// only preload the essential fonts for initial render
-	`</fonts/rajdhani-light.woff2>; rel=preload; as=font; type='font/woff2'`,
-	`</fonts/roboto-regular.woff2>; rel=preload; as=font; type='font/woff2'`
+	`<${hashed.css}>; rel=preload; as=style`
 ].join( ', ' );
 
 function serve ( res, data, maxAge = 30 ) {
