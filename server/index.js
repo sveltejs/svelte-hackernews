@@ -127,7 +127,8 @@ function serveJSON ( res, data ) {
 	res.writeHead( 200, {
 		'Content-Length': json.length,
 		'Content-Type': 'application/json',
-		'Cache-Control': 'no-cache'
+		'Cache-Control': 'no-cache',
+		'Access-Control-Allow-Origin': '*'
 	});
 
 	res.end( json );
