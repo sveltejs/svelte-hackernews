@@ -1,3 +1,7 @@
+# Deprecated in favour of https://github.com/sveltejs/sapper-hacker-news
+
+---
+
 # Svelte Hacker News
 
 ## https://hn.svelte.technology
